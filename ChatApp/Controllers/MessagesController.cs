@@ -1,6 +1,7 @@
 ﻿using ChatApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ChatApp.Controllers
 {
@@ -15,10 +16,16 @@ namespace ChatApp.Controllers
             this.messagesAppService = messagesAppService;
         }
 
-        [HttpGet]
-        public List<string> GetMessages()
+        [HttpGet("recieved")]
+        public Task<List<string>> GetRecievedMessages(int userId)
         {
-            return messagesAppService.GetMessages();
+            return messagesAppService.GetRecievedMessages(userId);
+        }
+
+        [HttpPost]
+        public Task CreateMessage(string message, int senderUserId, int recipientUserId)
+        {
+            return messagesAppService.CreateMessage(message, senderUserId, recipientUserId);
         }
     }
 }

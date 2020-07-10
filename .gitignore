@@ -332,3 +332,4 @@ ASALocalRun/
 .localhistory/
 
 **/node_modules
+/ChatApp/chatapp.db
