@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChatApp.Services;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace ChatApp.Controllers
@@ -6,23 +7,18 @@ namespace ChatApp.Controllers
     [Route("messages")]
     public class MessagesController : ControllerBase
     {
-        private readonly List<string> messages;
+        private readonly MessagesAppService messagesAppService;
 
-        public MessagesController()
+        public MessagesController(
+            MessagesAppService messagesAppService)
         {
-            messages = new List<string>
-            {
-                "Szia",
-                "Szia",
-                "Mi újság?",
-                "semmi"
-            };
+            this.messagesAppService = messagesAppService;
         }
 
         [HttpGet]
         public List<string> GetMessages()
         {
-            return messages;
+            return messagesAppService.GetMessages();
         }
     }
 }
