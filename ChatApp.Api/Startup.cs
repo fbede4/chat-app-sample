@@ -1,15 +1,12 @@
+using Autofac;
+using ChatApp.Api.AutofacModules;
 using ChatApp.Application.Interfaces;
 using ChatApp.Application.Services;
 using ChatApp.Dal;
-using ChatApp.Dal.Repositories;
-using ChatApp.Dal.UoW;
 using ChatApp.Domain.Configuration;
-using ChatApp.Domain.Repositories;
-using ChatApp.Domain.UoW;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,26 +30,10 @@ namespace ChatApp
             services.Configure<UserHandlingConfiguration>(configuration.GetSection("UserHandling"));
 
             services.AddMemoryCache();
-            services.AddScoped<UserRepository>();
-            services.AddScoped<IUserRepository>(serviceProvider =>
-            {
-                var repo = serviceProvider.GetRequiredService<UserRepository>();
-                var cache = serviceProvider.GetRequiredService<IMemoryCache>();
-                return new CachedUserRepository(cache, repo);
-            });
-            services.AddScoped<IMessageRepository, MessageRepository>();
-            services.AddScoped<IMessagesAppService, MessagesAppService>();
-            services.AddScoped<IUsersAppService, UsersAppService>();
 
             services.AddDbContext<ChatDbContext>(options =>
             {
                 options.UseSqlite("Data Source=chatapp.db");
-            });
-
-            services.AddScoped<IUnitOfWork>(serviceProvider =>
-            {
-                var dbContext = serviceProvider.GetRequiredService<ChatDbContext>();
-                return new UnitOfWork(dbContext);
             });
 
             services.AddControllers();
@@ -64,6 +45,12 @@ namespace ChatApp
                     Title = "Chat Api"
                 });
             });
+        }
+
+        public void ConfigureContainer(ContainerBuilder container)
+        {
+            container.RegisterModule(new DalAutofacModule());
+            container.RegisterModule(new AppAutofacModule());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
