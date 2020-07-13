@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.Api", "ChatApp\ChatApp.Api.csproj", "{A7074583-4CB3-430D-900D-5B6B040B3A08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.Api", "ChatApp.Api\ChatApp.Api.csproj", "{A7074583-4CB3-430D-900D-5B6B040B3A08}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.Domain", "ChatApp.Domain\ChatApp.Domain.csproj", "{8F024A0F-F210-48F0-ACD6-0F06D0FAADB9}"
 EndProject
