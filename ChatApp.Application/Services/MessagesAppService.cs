@@ -4,8 +4,6 @@ using ChatApp.Domain.Repositories;
 using ChatApp.Domain.UoW;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ChatApp.Application.Services
@@ -26,28 +24,17 @@ namespace ChatApp.Application.Services
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task<List<string>> GetRecievedMessages(int userId)
-        {
-            logger.LogInformation($"Gathering messages for user {userId}");
-            var messages = await messageRepository.GetMessages(message => message.RecipientUserId == userId);
-            logger.LogInformation($"Gathered messages for user {userId}");
-            return messages
-                .Select(message => message.Text)
-                .ToList();
-        }
-
-        public async Task<int> CreateMessage(string message, int senderUserId, int recipientUserId)
+        public async Task SendMessage(string message, int sentByUserId, int conversationId)
         {
             var entity = new Message
             {
                 Text = message,
                 CreateDate = DateTime.Now,
-                SenderUserId = senderUserId,
-                RecipientUserId = recipientUserId
+                SentByUserId = sentByUserId,
+                ConversationId = conversationId
             };
             messageRepository.Insert(entity);
             await unitOfWork.SaveChangesAsync();
-            return entity.Id;
         }
     }
 }

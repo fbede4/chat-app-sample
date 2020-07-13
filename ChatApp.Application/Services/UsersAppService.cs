@@ -5,7 +5,9 @@ using ChatApp.Domain.Model;
 using ChatApp.Domain.Repositories;
 using ChatApp.Domain.UoW;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ChatApp.Application.Services
@@ -49,6 +51,27 @@ namespace ChatApp.Application.Services
                 return entity.Id;
             }
             throw new ValidationException("User creation is disabled");
+        }
+
+        public async Task<List<UserDto>> GetUsers(string name)
+        {
+            var users = await userRepository.GetUsers(name);
+            return users
+                .Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    Name = u.Name
+                }).ToList();
+        }
+
+        public async Task<UserDto> Login(string name)
+        {
+            var user = await userRepository.GetUserAsync(name);
+            return new UserDto
+            {
+                Id = user.Id,
+                Name = user.Name
+            };
         }
     }
 }

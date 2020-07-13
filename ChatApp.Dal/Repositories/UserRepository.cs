@@ -1,6 +1,8 @@
 ﻿using ChatApp.Domain.Model;
 using ChatApp.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ChatApp.Dal.Repositories
@@ -13,7 +15,21 @@ namespace ChatApp.Dal.Repositories
 
         public Task<User> GetUserAsync(int id)
         {
-            return chatDbContext.Users.SingleAsync(u => u.Id == id);
+            return chatDbContext.Users
+                .SingleAsync(u => u.Id == id);
+        }
+
+        public Task<User> GetUserAsync(string name)
+        {
+            return chatDbContext.Users
+                .SingleAsync(u => u.Name == name);
+        }
+
+        public Task<List<User>> GetUsers(string name)
+        {
+            return chatDbContext.Users
+                .Where(u => u.Name.ToLower().Contains(name.ToLower()))
+                .ToListAsync();
         }
     }
 }

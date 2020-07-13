@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ChatApp.Dal.Repositories
 {
-    public class CachedUserRepository : IUserRepository
+    public class CachedUserRepository //: IUserRepository
     {
         private readonly IMemoryCache memoryCache;
         private readonly UserRepository userRepository;

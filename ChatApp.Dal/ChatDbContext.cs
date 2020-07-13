@@ -11,20 +11,31 @@ namespace ChatApp.Dal
 
         public DbSet<User> Users { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>()
-                .HasMany(user => user.MessagesSent)
-                .WithOne(message => message.SenderUser)
-                .HasForeignKey(message => message.SenderUserId);
+            modelBuilder.Entity<Conversation>()
+                .HasOne(c => c.FirstParticipantUser)
+                .WithMany()
+                .HasForeignKey(c => c.FirstParticipantUserId);
 
-            modelBuilder.Entity<User>()
-                .HasMany(user => user.MessagesRecieved)
-                .WithOne(message => message.RecipientUser)
-                .HasForeignKey(message => message.RecipientUserId);
+            modelBuilder.Entity<Conversation>()
+                .HasOne(c => c.SecondParticipantUser)
+                .WithMany()
+                .HasForeignKey(c => c.SecondParticipantUserId);
+
+            modelBuilder.Entity<Conversation>()
+                .HasMany(c => c.Messages)
+                .WithOne(u => u.Conversation)
+                .HasForeignKey(c => c.ConversationId);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(user => user.SentByUser)
+                .WithMany()
+                .HasForeignKey(user => user.SentByUserId);
         }
     }
 }

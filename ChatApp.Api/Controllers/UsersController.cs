@@ -1,6 +1,7 @@
 ﻿using ChatApp.Application.Dtos;
 using ChatApp.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ChatApp.Controllers
@@ -13,6 +14,18 @@ namespace ChatApp.Controllers
         public UsersController(IUsersAppService usersAppService)
         {
             this.usersAppService = usersAppService;
+        }
+
+        [HttpGet("search/{name}")]
+        public Task<List<UserDto>> GetUsers(string name)
+        {
+            return usersAppService.GetUsers(name);
+        }
+
+        [HttpPost("login/{name}")]
+        public Task<UserDto> Login(string name)
+        {
+            return usersAppService.Login(name);
         }
 
         [HttpGet("{id}")]
