@@ -1,5 +1,6 @@
 using Autofac;
 using ChatApp.Api.AutofacModules;
+using ChatApp.Application.Hubs;
 using ChatApp.Dal;
 using ChatApp.Domain.Configuration;
 using Microsoft.AspNetCore.Builder;
@@ -34,12 +35,15 @@ namespace ChatApp
                 options.UseSqlite("Data Source=chatapp.db");
             });
 
+            services.AddSignalR();
+
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
             {
                 builder
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    .AllowAnyOrigin();
+                    .WithOrigins("http://localhost:4200")
+                    .AllowCredentials();
             }));
 
             services.AddControllers();
@@ -73,6 +77,7 @@ namespace ChatApp
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<ChatHub>("/chat");
                 endpoints.MapControllers();
             });
 

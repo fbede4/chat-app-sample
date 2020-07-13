@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import axios from 'axios';
 import { ConversationList, Conversation, User } from './model/conversation.model';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import * as signalR from '@aspnet/signalr';
 
 @Component({
   selector: 'app-root',
@@ -20,8 +21,27 @@ export class AppComponent implements OnInit {
   conversations: ConversationList[];
   userId: number;
   isLoading = false;
+  conn: signalR.HubConnection;
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog) {
+    this.conn = new signalR.HubConnectionBuilder()
+      .withUrl('http://localhost:5000/chat')
+      .build();
+    this.conn.on('Chat', async (object: string) => {
+      if (this.currentConversation.id) {
+        await this.getConversation(this.currentConversation.id);
+      }
+    });
+    this.conn.start().catch(err => {
+      setTimeout(() => this.startSignalr(3000), 3000);
+    });
+  }
+
+  startSignalr(retryInterval: number) {
+    this.conn.start().catch(err => {
+      setTimeout(() => this.startSignalr(retryInterval + 3000), retryInterval);
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     this.isLoading = true;
