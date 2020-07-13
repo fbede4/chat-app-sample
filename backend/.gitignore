@@ -333,3 +333,4 @@ ASALocalRun/
 
 **/node_modules
 /ChatApp/chatapp.db
+*.db

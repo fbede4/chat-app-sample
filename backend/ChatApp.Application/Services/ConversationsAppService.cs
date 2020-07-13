@@ -28,6 +28,7 @@ namespace ChatApp.Application.Services
             return conversations
                 .Select(c => new ConversationListDto
                 {
+                    Id = c.Id,
                     PartnerUserName = c.FirstParticipantUserId == userId
                         ? c.SecondParticipantUser.Name
                         : c.FirstParticipantUser.Name,
@@ -42,6 +43,7 @@ namespace ChatApp.Application.Services
             var conversation = await conversationRepository.GetConversation(conversationId);
             return new ConversationDto
             {
+                Id = conversation.Id,
                 PartnerUserName = conversation.FirstParticipantUserId == userId
                         ? conversation.SecondParticipantUser.Name
                         : conversation.FirstParticipantUser.Name,

@@ -1,7 +1,5 @@
 using Autofac;
 using ChatApp.Api.AutofacModules;
-using ChatApp.Application.Interfaces;
-using ChatApp.Application.Services;
 using ChatApp.Dal;
 using ChatApp.Domain.Configuration;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +34,14 @@ namespace ChatApp
                 options.UseSqlite("Data Source=chatapp.db");
             });
 
+            services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
+            {
+                builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowAnyOrigin();
+            }));
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
@@ -60,6 +66,8 @@ namespace ChatApp
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("CorsPolicy");
 
             app.UseRouting();
 
