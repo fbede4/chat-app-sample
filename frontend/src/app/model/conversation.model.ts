@@ -16,3 +16,8 @@ export interface Message {
     timeStamp: Date;
     message: string;
 }
+
+export interface User {
+    id: number;
+    name: string;
+}

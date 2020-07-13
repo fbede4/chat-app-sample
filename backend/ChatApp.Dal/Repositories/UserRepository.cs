@@ -22,11 +22,16 @@ namespace ChatApp.Dal.Repositories
         public Task<User> GetUserAsync(string name)
         {
             return chatDbContext.Users
-                .SingleAsync(u => u.Name == name);
+                .SingleOrDefaultAsync(u => u.Name == name);
         }
 
         public Task<List<User>> GetUsers(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return chatDbContext.Users
+                    .ToListAsync();
+            }
             return chatDbContext.Users
                 .Where(u => u.Name.ToLower().Contains(name.ToLower()))
                 .ToListAsync();

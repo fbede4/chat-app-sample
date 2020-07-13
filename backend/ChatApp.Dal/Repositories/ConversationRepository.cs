@@ -31,5 +31,13 @@ namespace ChatApp.Dal.Repositories
                 .Where(c => c.FirstParticipantUserId == userId || c.SecondParticipantUserId == userId)
                 .ToListAsync();
         }
+
+        public Task<bool> GetIfExists(int firstUserId, int secondUserId)
+        {
+            return chatDbContext.Conversations
+                .Where(c => (c.FirstParticipantUserId == firstUserId && c.SecondParticipantUserId == secondUserId)
+                        || (c.SecondParticipantUserId == firstUserId && c.FirstParticipantUserId == secondUserId))
+                .AnyAsync();
+        }
     }
 }

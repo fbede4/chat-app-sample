@@ -8,5 +8,6 @@ namespace ChatApp.Domain.Repositories
     {
         Task<List<Conversation>> GetConversations(int userId);
         Task<Conversation> GetConversation(int conversationId);
+        Task<bool> GetIfExists(int firstUserId, int secondUserId);
     }
 }

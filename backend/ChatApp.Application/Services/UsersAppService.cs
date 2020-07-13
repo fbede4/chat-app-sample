@@ -67,6 +67,15 @@ namespace ChatApp.Application.Services
         public async Task<UserDto> Login(string name)
         {
             var user = await userRepository.GetUserAsync(name);
+            if (user == null)
+            {
+                user = new User
+                {
+                    Name = name
+                };
+                userRepository.Insert(user);
+                await unitOfWork.SaveChangesAsync();
+            }
             return new UserDto
             {
                 Id = user.Id,

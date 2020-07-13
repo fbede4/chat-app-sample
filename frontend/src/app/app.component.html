@@ -38,6 +38,7 @@
           <div class="headind_srch">
             <div class="channel_heading">
               <h4>Conversations</h4>
+              <button (click)="openAddConversation()"><div class="plus_button">+</div></button>
             </div>
           </div>
           <div class="inbox_chat">
@@ -109,6 +110,9 @@
           </div>
         </div>
       </div>
+      <button (click)="logout()" class="logout">
+        Logout
+      </button>
     </div>
   </div>
 </div>

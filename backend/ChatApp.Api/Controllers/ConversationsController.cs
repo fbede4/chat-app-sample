@@ -30,9 +30,13 @@ namespace ChatApp.Api.Controllers
         }
 
         [HttpPost]
-        public Task<int> CreateConversation(ConversationCreateDto dto)
+        public Task<int> CreateConversation(int firstUserId, int secondUserId)
         {
-            return conversationsAppService.CreateConversation(dto);
+            return conversationsAppService.CreateConversation(new ConversationCreateDto
+            {
+                FirstUserId = firstUserId,
+                SecondUserId = secondUserId
+            });
         }
     }
 }

@@ -16,8 +16,8 @@ namespace ChatApp.Controllers
             this.usersAppService = usersAppService;
         }
 
-        [HttpGet("search/{name}")]
-        public Task<List<UserDto>> GetUsers(string name)
+        [HttpGet("search")]
+        public Task<List<UserDto>> GetUsers([FromQuery]string name)
         {
             return usersAppService.GetUsers(name);
         }

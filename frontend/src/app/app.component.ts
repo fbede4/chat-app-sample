@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import axios from 'axios';
-import { ConversationList, Conversation } from './model/conversation.model';
+import { ConversationList, Conversation, User } from './model/conversation.model';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,8 @@ export class AppComponent implements OnInit {
   userId: number;
   isLoading = false;
 
+  constructor(public dialog: MatDialog) { }
+
   async ngOnInit(): Promise<void> {
     this.isLoading = true;
     const savedUserId = localStorage.getItem('userId');
@@ -37,6 +40,15 @@ export class AppComponent implements OnInit {
     await this.getConversations();
   }
 
+  openAddConversation() {
+    const dialogRef = this.dialog.open(AddConversationComponent, {
+      data: this.userId
+    });
+    dialogRef.afterClosed().subscribe(async () => {
+      await this.getConversations();
+    });
+  }
+
   async getConversations() {
     const conversationsResponse = await axios.get(`http://localhost:5000/conversations?userId=${this.userId}`)
     this.conversations = conversationsResponse.data;
@@ -51,9 +63,64 @@ export class AppComponent implements OnInit {
     if (this.newMessage.trim() === '') {
       return;
     }
-      // tslint:disable-next-line: max-line-length
+    // tslint:disable-next-line: max-line-length
     await axios.post(`http://localhost:5000/messages?message=${this.newMessage}&sentByUserId=${this.userId}&conversationId=${this.currentConversation.id}`);
     this.newMessage = '';
     await this.getConversation(this.currentConversation.id);
+  }
+
+  logout() {
+    localStorage.clear();
+    this.userId = 0;
+    this.conversations = null;
+    this.username = '';
+  }
+}
+
+@Component({
+  template: `
+  <div style="height: auto;">
+  <div mat-dialog-content *ngIf="users">
+    <mat-form-field>
+      <mat-label>Select User</mat-label>
+      <mat-select [(ngModel)]="selectedUser">
+        <mat-option *ngFor="let user of users" [value]="user">
+          {{user.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <button class="btn btn-primary" style="margin-right: 10px;" mat mat-button (click)="onCancelClick()">Cancel</button>
+    <button class="btn btn-primary" mat mat-button (click)="onOkClick()">Ok</button>
+  </div>
+</div>
+  `
+})
+export class AddConversationComponent implements OnInit {
+
+  selectedUser: User = {
+    id: 0,
+    name: ''
+  };
+  users: User[];
+
+  constructor(
+    public dialogRef: MatDialogRef<AddConversationComponent>,
+    @Inject(MAT_DIALOG_DATA) public userId: number) { }
+
+  async ngOnInit(): Promise<void> {
+    const response = await axios.get(`http://localhost:5000/users/search`);
+    this.users = response.data
+      .filter(u => u.id !== this.userId);
+  }
+
+  onCancelClick(): void {
+    this.dialogRef.close();
+  }
+
+  async onOkClick(): Promise<void> {
+    await axios.post(`http://localhost:5000/conversations?firstUserId=${this.userId}&secondUserId=${this.selectedUser.id}`);
+    this.dialogRef.close();
   }
 }

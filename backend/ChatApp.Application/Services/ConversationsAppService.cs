@@ -59,6 +59,10 @@ namespace ChatApp.Application.Services
 
         public async Task<int> CreateConversation(ConversationCreateDto dto)
         {
+            if (await conversationRepository.GetIfExists(dto.FirstUserId, dto.SecondUserId))
+            {
+                return 0;
+            }
             var conversation = new Conversation
             {
                 FirstParticipantUserId = dto.FirstUserId,
