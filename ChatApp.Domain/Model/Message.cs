@@ -1,11 +1,9 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace ChatApp.Model
+namespace ChatApp.Domain.Model
 {
     public class Message
     {
-        [Key]
         public int Id { get; set; }
         
         public DateTime CreateDate { get; set; }

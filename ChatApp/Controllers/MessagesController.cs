@@ -1,4 +1,4 @@
-﻿using ChatApp.Services;
+﻿using ChatApp.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,10 +8,10 @@ namespace ChatApp.Controllers
     [Route("messages")]
     public class MessagesController : ControllerBase
     {
-        private readonly MessagesAppService messagesAppService;
+        private readonly IMessagesAppService messagesAppService;
 
         public MessagesController(
-            MessagesAppService messagesAppService)
+            IMessagesAppService messagesAppService)
         {
             this.messagesAppService = messagesAppService;
         }

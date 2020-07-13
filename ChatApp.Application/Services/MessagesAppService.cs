@@ -1,33 +1,35 @@
-﻿using ChatApp.Dal;
-using ChatApp.Model;
-using Microsoft.EntityFrameworkCore;
+﻿using ChatApp.Application.Interfaces;
+using ChatApp.Domain.Model;
+using ChatApp.Domain.Repositories;
+using ChatApp.Domain.UoW;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ChatApp.Services
+namespace ChatApp.Application.Services
 {
-    public class MessagesAppService
+    public class MessagesAppService : IMessagesAppService
     {
         private readonly ILogger<MessagesAppService> logger;
-        private readonly ChatDbContext chatDbContext;
+        private readonly IMessageRepository messageRepository;
+        private readonly IUnitOfWork unitOfWork;
 
         public MessagesAppService(
             ILogger<MessagesAppService> logger,
-            ChatDbContext chatDbContext)
+            IMessageRepository messageRepository,
+            IUnitOfWork unitOfWork)
         {
             this.logger = logger;
-            this.chatDbContext = chatDbContext;
+            this.messageRepository = messageRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task<List<string>> GetRecievedMessages(int userId)
         {
             logger.LogInformation($"Gathering messages for user {userId}");
-            var messages = await chatDbContext.Messages
-                .Where(message => message.RecipientUserId == userId)
-                .ToListAsync();
+            var messages = await messageRepository.GetMessages(message => message.RecipientUserId == userId);
             logger.LogInformation($"Gathered messages for user {userId}");
             return messages
                 .Select(message => message.Text)
@@ -43,8 +45,8 @@ namespace ChatApp.Services
                 SenderUserId = senderUserId,
                 RecipientUserId = recipientUserId
             };
-            chatDbContext.Messages.Add(entity);
-            await chatDbContext.SaveChangesAsync();
+            messageRepository.Insert(entity);
+            await unitOfWork.SaveChangesAsync();
             return entity.Id;
         }
     }

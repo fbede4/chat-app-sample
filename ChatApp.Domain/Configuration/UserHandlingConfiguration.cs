@@ -1,4 +1,4 @@
-﻿namespace ChatApp.Configuration
+﻿namespace ChatApp.Domain.Configuration
 {
     public class UserHandlingConfiguration
     {

@@ -1,9 +1,5 @@
-﻿using ChatApp.Configuration;
-using ChatApp.Dal;
-using ChatApp.Model;
+﻿using ChatApp.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace ChatApp.Controllers
@@ -11,31 +7,17 @@ namespace ChatApp.Controllers
     [Route("users")]
     public class UsersController : ControllerBase
     {
-        private readonly UserHandlingConfiguration config;
-        private readonly ChatDbContext chatDbContext;
+        private readonly IUsersAppService usersAppService;
 
-        public UsersController(
-            IOptions<UserHandlingConfiguration> options,
-            ChatDbContext chatDbContext)
+        public UsersController(IUsersAppService usersAppService)
         {
-            this.config = options.Value;
-            this.chatDbContext = chatDbContext;
+            this.usersAppService = usersAppService;
         }
 
         [HttpPost]
-        public async Task<int> CreateUser(string name)
+        public Task<int> CreateUser(string name)
         {
-            if (config.IsUserCreationEnabled)
-            {
-                var entity = new User
-                {
-                    Name = name
-                };
-                chatDbContext.Users.Add(entity);
-                await chatDbContext.SaveChangesAsync();
-                return entity.Id;
-            }
-            throw new ValidationException("User creation is disabled");
+            return usersAppService.CreateUser(name);
         }
     }
 }

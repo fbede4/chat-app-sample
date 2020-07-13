@@ -1,4 +1,4 @@
-﻿using ChatApp.Model;
+﻿using ChatApp.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatApp.Dal

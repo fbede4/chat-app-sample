@@ -1,6 +1,11 @@
-using ChatApp.Configuration;
+using ChatApp.Application.Interfaces;
+using ChatApp.Application.Services;
 using ChatApp.Dal;
-using ChatApp.Services;
+using ChatApp.Dal.Repositories;
+using ChatApp.Dal.UoW;
+using ChatApp.Domain.Configuration;
+using ChatApp.Domain.Repositories;
+using ChatApp.Domain.UoW;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -25,12 +30,23 @@ namespace ChatApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<UserHandlingConfiguration>(configuration.GetSection("UserHandling"));
+            
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IMessagesAppService, MessagesAppService>();
+            services.AddScoped<IUsersAppService, UsersAppService>();
 
             services.AddDbContext<ChatDbContext>(options =>
             {
                 options.UseSqlite("Data Source=chatapp.db");
             });
-            services.AddScoped<MessagesAppService>();
+
+            services.AddScoped<IUnitOfWork>(serviceProvider =>
+            {
+                var dbContext = serviceProvider.GetRequiredService<ChatDbContext>();
+                return new UnitOfWork(dbContext);
+            });
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
