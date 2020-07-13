@@ -9,6 +9,7 @@ using ChatApp.Domain.UoW;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,8 +31,15 @@ namespace ChatApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<UserHandlingConfiguration>(configuration.GetSection("UserHandling"));
-            
-            services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddMemoryCache();
+            services.AddScoped<UserRepository>();
+            services.AddScoped<IUserRepository>(serviceProvider =>
+            {
+                var repo = serviceProvider.GetRequiredService<UserRepository>();
+                var cache = serviceProvider.GetRequiredService<IMemoryCache>();
+                return new CachedUserRepository(cache, repo);
+            });
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IMessagesAppService, MessagesAppService>();
             services.AddScoped<IUsersAppService, UsersAppService>();

@@ -1,5 +1,7 @@
 ﻿using ChatApp.Domain.Model;
 using ChatApp.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace ChatApp.Dal.Repositories
 {
@@ -7,6 +9,11 @@ namespace ChatApp.Dal.Repositories
     {
         public UserRepository(ChatDbContext chatDbContext) : base(chatDbContext)
         {
+        }
+
+        public Task<User> GetUserAsync(int id)
+        {
+            return chatDbContext.Users.SingleAsync(u => u.Id == id);
         }
     }
 }

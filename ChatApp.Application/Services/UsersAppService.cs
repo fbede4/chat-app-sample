@@ -1,4 +1,5 @@
-﻿using ChatApp.Application.Interfaces;
+﻿using ChatApp.Application.Dtos;
+using ChatApp.Application.Interfaces;
 using ChatApp.Domain.Configuration;
 using ChatApp.Domain.Model;
 using ChatApp.Domain.Repositories;
@@ -23,6 +24,16 @@ namespace ChatApp.Application.Services
             this.config = options.Value;
             this.userRepository = userRepository;
             this.unitOfWork = unitOfWork;
+        }
+
+        public async Task<UserDto> GetUser(int id)
+        {
+            var user = await userRepository.GetUserAsync(id);
+            return new UserDto
+            {
+                Id = user.Id,
+                Name = user.Name
+            };
         }
 
         public async Task<int> CreateUser(string name)

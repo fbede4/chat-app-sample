@@ -1,4 +1,5 @@
-﻿using ChatApp.Application.Interfaces;
+﻿using ChatApp.Application.Dtos;
+using ChatApp.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -12,6 +13,12 @@ namespace ChatApp.Controllers
         public UsersController(IUsersAppService usersAppService)
         {
             this.usersAppService = usersAppService;
+        }
+
+        [HttpGet("{id}")]
+        public Task<UserDto> GetUser(int id)
+        {
+            return usersAppService.GetUser(id);
         }
 
         [HttpPost]
