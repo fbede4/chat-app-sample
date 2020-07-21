@@ -28,6 +28,7 @@ export class AppComponent implements OnInit {
       .withUrl('http://localhost:5000/chat')
       .build();
     this.conn.on('Chat', async (object: string) => {
+      await this.getConversations();
       if (this.currentConversation.id) {
         await this.getConversation(this.currentConversation.id);
       }
