@@ -33,13 +33,8 @@ namespace ChatApp
             services.Configure<UserHandlingConfiguration>(configuration.GetSection("UserHandling"));
 
             services.AddMemoryCache();
-            services.AddScoped<UserRepository>();
-            services.AddScoped<IUserRepository>(serviceProvider =>
-            {
-                var repo = serviceProvider.GetRequiredService<UserRepository>();
-                var cache = serviceProvider.GetRequiredService<IMemoryCache>();
-                return new CachedUserRepository(cache, repo);
-            });
+
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IMessagesAppService, MessagesAppService>();
             services.AddScoped<IUsersAppService, UsersAppService>();
